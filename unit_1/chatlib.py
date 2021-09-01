@@ -48,12 +48,18 @@ def parse_message(data):
     parsed_data = data.split(DELIMITER)
     if len(parsed_data) != 3:
         return None, None
-    cmd = parsed_data[0].strip()
-    data_len_as_str = parsed_data[1].strip()
+    cmd = parsed_data[0]
+    if len(cmd) != CMD_FIELD_LENGTH:
+        return None, None
+    cmd = cmd.strip()
+    data_len_as_str = parsed_data[1]
+    if len(data_len_as_str) != LENGTH_FIELD_LENGTH:
+        return None, None
+    data_len_as_str = data_len_as_str.strip()
     if not data_len_as_str.isnumeric():
         return None, None
     expected_content_len = int(parsed_data[1])
-    if not 0 < expected_content_len < MAX_DATA_LENGTH:
+    if not 0 <= expected_content_len <= MAX_DATA_LENGTH:
         return None, None
     content = parsed_data[2]
     if len(content) != expected_content_len:
