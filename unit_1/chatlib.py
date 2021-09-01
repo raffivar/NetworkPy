@@ -29,13 +29,14 @@ def build_message(cmd, data):
     Gets command name (str) and data field (str) and creates a valid protocol message
     Returns: str, or None if error occured
     """
-    if len(cmd) > CMD_FIELD_LENGTH:
+    if not 0 < len(cmd) <= CMD_FIELD_LENGTH:
         return None
-    padded_cmd = cmd + (' ' * (CMD_FIELD_LENGTH - len(cmd)))
-    if len(data) > MAX_DATA_LENGTH:
+    padded_cmd = "{}{}".format(cmd, ' ' * (CMD_FIELD_LENGTH - len(cmd)))
+    content_len = len(data)
+    if content_len > MAX_DATA_LENGTH:
         return None
-    data_len_as_str = str(len(data))
-    padded_data_len = ('0' * (LENGTH_FIELD_LENGTH - len(data_len_as_str))) + data_len_as_str
+    data_len_as_str = str(content_len)
+    padded_data_len = "{}{}".format('0' * (LENGTH_FIELD_LENGTH - len(data_len_as_str)), data_len_as_str)
     return "{}{}{}{}{}".format(padded_cmd, DELIMITER, padded_data_len, DELIMITER, data)
 
 
