@@ -59,7 +59,7 @@ def parse_message(data):
     if not data_len_as_str.isnumeric():
         return None, None
     expected_content_len = int(parsed_data[1])
-    if not 0 <= expected_content_len <= MAX_DATA_LENGTH:
+    if expected_content_len > MAX_DATA_LENGTH:
         return None, None
     content = parsed_data[2]
     if len(content) != expected_content_len:
