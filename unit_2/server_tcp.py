@@ -16,7 +16,7 @@ while True:
         print("closing client socket now...")
         client_socket.send("Bye".encode())
         break
-    client_socket.send(data.encode())
+    client_socket.send("{}!!!".format(data.upper()).encode())
 
 client_socket.close()
 server_socket.close()
