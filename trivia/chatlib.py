@@ -12,7 +12,9 @@ DATA_DELIMITER = "#"  # Delimiter in the data part of the message
 # In this dictionary we will have all the client and server command names
 PROTOCOL_CLIENT = {
     "login_msg": "LOGIN",
-    "logout_msg": "LOGOUT"
+    "logout_msg": "LOGOUT",
+    "score_msg": "MY_SCORE",
+    "highscore_msg": "HIGHSCORE"
 }  # .. Add more commands if needed
 
 PROTOCOL_SERVER = {

@@ -9,7 +9,7 @@ def build_and_send_message(conn, code, data):
     """
     Builds a new message using chatlib, wanted code and message.
     Prints debug info, then sends it to the given socket.
-    Paramaters: conn (socket object), code (str), data (str)
+    Parameters: conn (socket object), code (str), data (str)
     Returns: Nothing
     """
     msg = chatlib.build_message(code, data)
@@ -18,15 +18,45 @@ def build_and_send_message(conn, code, data):
 
 def recv_message_and_parse(conn):
     """
-    Recieves a new message from given socket,
+    Receives a new message from given socket,
     then parses the message using chatlib.
-    Paramaters: conn (socket object)
+    Parameters: conn (socket object)
     Returns: cmd (str) and data (str) of the received message.
-    If error occured, will return None, None
+    If error occurred, will return None, None
     """
     full_msg = conn.recv(1024).decode()
     cmd, data = chatlib.parse_message(full_msg)
     return cmd, data
+
+
+def build_send_recv_parse(conn, code, data):
+    """
+    Sends a request  to + Receives response from server
+    Parameters: conn (socket object), code (str), data (str)
+    Returns: Nothing
+    """
+    build_and_send_message(conn, code, data)
+    cmd, data = recv_message_and_parse(conn)
+    print("cmd:\n{}".format(cmd))
+    print("data:\n{}".format(data))
+
+
+def get_score(conn):
+    """
+    Gets score from the server
+    Gets high score from the server
+    Returns: Nothing
+    """
+    build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["score_msg"], "")
+
+
+def get_highscore(conn):
+    """
+    Gets high score from the server
+    Parameters: conn (socket object)
+    Returns: Nothing
+    """
+    build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["highscore_msg"], "")
 
 
 def connect():
@@ -56,11 +86,30 @@ def logout(conn):
     build_and_send_message(conn, chatlib.PROTOCOL_CLIENT["logout_msg"], "")
 
 
+def print_choices():
+    print("s - Score")
+    print("h - High score")
+    print("q - Quit")
+
+
 def main():
-    sock = connect()
-    login(sock)
-    logout(sock)
-    sock.close()
+    conn = connect()
+    login(conn)
+
+    while True:
+        print_choices()
+        choice = input("Please enter your choice: ").lower()
+        if choice == "s":
+            get_score(conn)
+        elif choice == "h":
+            get_highscore(conn)
+        elif choice == "q":
+            break
+        else:
+            print("command {} not found".format(choice))
+
+    logout(conn)
+    conn.close()
     exit()
 
 
