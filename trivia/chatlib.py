@@ -13,17 +13,35 @@ DATA_DELIMITER = "#"  # Delimiter in the data part of the message
 PROTOCOL_CLIENT = {
     "login_msg": "LOGIN",
     "logout_msg": "LOGOUT",
+    "get_logged_users": "LOGGED",
     "score_msg": "MY_SCORE",
-    "highscore_msg": "HIGHSCORE"
+    "highscore_msg": "HIGHSCORE",
+    "play_question": "GET_QUESTION",
+    "send_answer": "SEND_ANSWER"
 }  # .. Add more commands if needed
 
 PROTOCOL_SERVER = {
     "login_ok_msg": "LOGIN_OK",
-    "login_failed_msg": "ERROR"
+    "login_failed_msg": "ERROR",
+    # "your_score": "YOUR_SCORE",
+    "your_question": "YOUR_QUESTION",
+    "correct_answer": "CORRECT_ANSWER",
+    "wrong_answer": "WRONG_ANSWER"
 }  # ..  Add more commands if needed
 
 # Other constants
 ERROR_RETURN = None  # What is returned in case of an error
+
+EXPECTED_FIELDS = {
+    "LOGIN_OK": 0,
+    "ERROR": 0,
+    "LOGGED_ANSWER": 0,
+    "YOUR_SCORE": 0,
+    "ALL_SCORE": 0,
+    "YOUR_QUESTION": 5,
+    "CORRECT_ANSWER": 0,
+    "WRONG_ANSWER": 0
+}
 
 
 def build_message(cmd, data):
@@ -66,7 +84,10 @@ def parse_message(data):
     content = parsed_data[2]
     if len(content) != expected_content_len:
         return None, None
-    return cmd, content
+    split_content = split_data(content, EXPECTED_FIELDS[cmd])
+    if split_content is None:
+        return None, None
+    return cmd, split_content
 
 
 def split_data(msg, expected_fields):
@@ -85,4 +106,4 @@ def join_data(msg_fields):
     Helper method. Gets a list, joins all of it's fields to one string divided by the data delimiter.
     Returns: string that looks like cell1#cell2#cell3
     """
-    return DELIMITER.join(msg_fields)
+    return DATA_DELIMITER.join(msg_fields)

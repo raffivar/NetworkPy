@@ -36,18 +36,50 @@ def build_send_recv_parse(conn, code, data):
     Returns: Nothing
     """
     build_and_send_message(conn, code, data)
-    cmd, data = recv_message_and_parse(conn)
-    print("cmd:\n{}".format(cmd))
-    print("data:\n{}".format(data))
+    return recv_message_and_parse(conn)
+
+
+def play_question(conn):
+    """
+    Gets question from server
+    Gets high score from the server
+    Returns: Nothing
+    """
+    cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["play_question"], "")
+    question_code = data[0]
+    question = data[1]
+    print("Q: {}:".format(question))
+    print("\t1. {}\n\t2. {}\n\t3. {}\n\t4. {}".format(data[2], data[3], data[4], data[5]))
+    answer_code = input("Please choose an answer [1-4]: ")
+    data_to_send = chatlib.join_data([question_code, answer_code])
+    cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["send_answer"], data_to_send)
+    if cmd == chatlib.PROTOCOL_SERVER["correct_answer"]:
+        print("YES!!!!")
+    elif cmd == chatlib.PROTOCOL_SERVER["wrong_answer"]:
+        correct_answer = data[0]
+        print("Nope, correct answer is #{}".format(correct_answer))
+
+
+def get_logged_users(conn):
+    """
+    Gets list oc connected users from the server
+    Parameters: conn (socket object)
+    Returns: Nothing
+    """
+    cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["get_logged_users"], "")
+    logged_users = data[0]
+    print("Logged users:\n{}".format(logged_users))
 
 
 def get_score(conn):
     """
     Gets score from the server
-    Gets high score from the server
+    Parameters: conn (socket object)
     Returns: Nothing
     """
-    build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["score_msg"], "")
+    cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["score_msg"], "")
+    score = data[0]
+    print("your score is {}".format(score))
 
 
 def get_highscore(conn):
@@ -56,7 +88,9 @@ def get_highscore(conn):
     Parameters: conn (socket object)
     Returns: Nothing
     """
-    build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["highscore_msg"], "")
+    cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["highscore_msg"], "")
+    highscore = data[0][0:-1]
+    print("High-Score table:\n{}".format(highscore))
 
 
 def connect():
@@ -73,10 +107,11 @@ def error_and_exit(error_msg):
 def login(conn):
     username = input("Please enter username: \n")
     password = input("Please enter password: \n")
-    build_and_send_message(conn, chatlib.PROTOCOL_CLIENT["login_msg"], "{}#{}".format(username, password))
+    data_to_send = chatlib.join_data([username, password])
+    build_and_send_message(conn, chatlib.PROTOCOL_CLIENT["login_msg"], data_to_send)
     login_response = recv_message_and_parse(conn)
     if login_response[0] == 'LOGIN_OK':
-        print("Login successful")
+        print("Logged in!")
     else:
         print("Login failed, please try again:")
         login(conn)
@@ -87,9 +122,11 @@ def logout(conn):
 
 
 def print_choices():
-    print("s - Score")
-    print("h - High score")
-    print("q - Quit")
+    print("p\t\tPlay a trivia question")
+    print("s\t\tScore")
+    print("h\t\tHigh score")
+    print("l\t\tGet logged users")
+    print("q\t\tQuit")
 
 
 def main():
@@ -99,10 +136,14 @@ def main():
     while True:
         print_choices()
         choice = input("Please enter your choice: ").lower()
-        if choice == "s":
+        if choice == "p":
+            play_question(conn)
+        elif choice == "s":
             get_score(conn)
         elif choice == "h":
             get_highscore(conn)
+        elif choice == "l":
+            get_logged_users(conn)
         elif choice == "q":
             break
         else:
