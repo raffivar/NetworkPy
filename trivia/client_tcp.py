@@ -51,6 +51,8 @@ def play_question(conn):
     print("Q: {}:".format(question))
     print("\t1. {}\n\t2. {}\n\t3. {}\n\t4. {}".format(data[2], data[3], data[4], data[5]))
     answer_code = input("Please choose an answer [1-4]: ")
+    while answer_code not in ['1', '2', '3', '4']:
+        answer_code = input("Invalid answer, please try again [1-4]: ")
     data_to_send = chatlib.join_data([question_code, answer_code])
     cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["send_answer"], data_to_send)
     if cmd == chatlib.PROTOCOL_SERVER["correct_answer"]:
