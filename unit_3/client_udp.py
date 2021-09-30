@@ -5,8 +5,13 @@ PORT = 8821
 MAX_MSG_SIZE = 1024
 
 my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-my_socket.sendto("geeks".encode(), (SERVER_IP, PORT))
-(response, remote_address) = my_socket.recvfrom(MAX_MSG_SIZE)
-data = response.decode()
-print("[{}]:\n{}\n".format(remote_address, data))
+while True:
+    msg = input("Message to server: ")
+    my_socket.sendto(msg.encode(), (SERVER_IP, PORT))
+    (response, remote_address) = my_socket.recvfrom(MAX_MSG_SIZE)
+    data = response.decode()
+    print("{}:\n{}".format(remote_address, data))
+    if data.lower() == "bye":
+        break
+
 my_socket.close()
