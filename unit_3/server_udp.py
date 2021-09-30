@@ -11,7 +11,6 @@ while True:
     (client_message, client_address) = server_socket.recvfrom(MAX_MSG_SIZE)
     data = client_message.decode()
     if data.lower() == "exit":
-        server_socket.sendto("bye".encode(), client_address)
         break
     response = "echo '{}'".format(data)
     server_socket.sendto(response.encode(), client_address)
