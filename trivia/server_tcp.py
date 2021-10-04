@@ -146,7 +146,9 @@ def handle_client_message(conn, cmd, data):
 
 
 def print_client_sockets(client_sockets):
-    print("All active players:")
+    print("All connected sockets:")
+    if len(client_sockets) == 0:
+        print("\t<No sockets connected>")
     for cs in client_sockets:
         print("\t", cs.getpeername())
 
