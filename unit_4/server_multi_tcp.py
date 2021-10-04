@@ -18,8 +18,10 @@ def main():
     server_socket.listen()
     print("Listening to clients...")
     client_sockets = []
+    messages_to_send = []
+
     while True:
-        ready_to_read, ready_to_write, in_error = select.select([server_socket] + client_sockets, [], [])
+        ready_to_read, ready_to_write, in_error = select.select([server_socket] + client_sockets, client_sockets, [])
         for current_socket in ready_to_read:
             if current_socket is server_socket:
                 (client_socket, client_address) = current_socket.accept()
@@ -27,15 +29,25 @@ def main():
                 client_sockets.append(client_socket)
                 print_client_sockets(client_sockets)
             else:
-                data = current_socket.recv(MAX_MSG_LENGTH).decode()
-                if data == "bye":
-                    print("Connection closed")
+                try:
+                    data = current_socket.recv(MAX_MSG_LENGTH).decode()
+                    if data == "":
+                        print("Connection closed")
+                        client_sockets.remove(current_socket)
+                        current_socket.close()
+                        print_client_sockets(client_sockets)
+                    else:
+                        print(data)
+                        messages_to_send.append((current_socket, data))
+                        for message in messages_to_send:
+                            current_socket, data = message
+                            if current_socket in ready_to_write:
+                                current_socket.send(data.encode())
+                                messages_to_send.remove(message)
+                except:
                     client_sockets.remove(current_socket)
                     current_socket.close()
                     print_client_sockets(client_sockets)
-                else:
-                    print(data)
-                    current_socket.send(data.encode())
 
 
 main()
