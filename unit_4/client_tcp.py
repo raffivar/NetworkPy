@@ -9,7 +9,10 @@ my_socket.connect((SERVER_IP, SERVER_PORT))
 
 while True:
     data = input("Please enter your message:\n")
+    len_msg = len(data)
     my_socket.send(data.encode())
+    if len_msg == 0:
+        break
     data = my_socket.recv(MAX_MSG_LENGTH).decode()
     print("The server sent", data)
 
