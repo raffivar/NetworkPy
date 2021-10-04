@@ -51,4 +51,5 @@ def main():
                     print_client_sockets(client_sockets)
 
 
-main()
+if __name__ == '__main__':
+    main()

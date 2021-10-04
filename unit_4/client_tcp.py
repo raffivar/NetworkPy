@@ -15,6 +15,3 @@ while True:
         break
     data = my_socket.recv(MAX_MSG_LENGTH).decode()
     print("The server sent", data)
-
-# print("Closing client socket...")
-# my_socket.close()
