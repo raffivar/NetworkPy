@@ -175,7 +175,7 @@ def main():
             else:
                 try:
                     cmd, data = recv_message_and_parse(current_socket)
-                    if cmd == "":
+                    if cmd is None:
                         print("Connection closed (on purpose)")
                         client_sockets.remove(current_socket)
                         handle_logout_message(current_socket)
