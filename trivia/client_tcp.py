@@ -111,11 +111,11 @@ def login(conn):
     password = input("Please enter password: \n")
     data_to_send = chatlib.join_data([username, password])
     build_and_send_message(conn, chatlib.PROTOCOL_CLIENT["login_msg"], data_to_send)
-    login_response = recv_message_and_parse(conn)
-    if login_response[0] == 'LOGIN_OK':
+    cmd, data = recv_message_and_parse(conn)
+    if cmd == 'LOGIN_OK':
         print("Logged in!")
     else:
-        print("Login failed, please try again:")
+        print("Login failed [{}] - please try again:".format(data[0]))
         login(conn)
 
 
