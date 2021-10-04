@@ -22,8 +22,8 @@ SERVER_IP = "127.0.0.1"
 
 def build_and_send_message(conn, code, msg):
     full_msg = chatlib.build_message(code, msg)
-    print("[SERVER] ", full_msg)  # Debug print
-    conn.send(full_msg.encode())
+    messages_to_send.append((conn, full_msg))  # add to messages_to_send
+    # print("[SERVER] ", full_msg)  # Debug print -> Moved to "send_all_saves_messages"
 
 
 def recv_message_and_parse(conn):
@@ -31,6 +31,16 @@ def recv_message_and_parse(conn):
     cmd, data = chatlib.parse_message(full_msg)
     print("[CLIENT] ", full_msg)  # Debug print
     return cmd, data
+
+
+def send_all_saves_messages(ready_to_write):
+    global messages_to_send
+    for message in messages_to_send:
+        current_socket, data = message
+        if current_socket in ready_to_write:
+            print("[SERVER] ", data)  # Debug print
+            current_socket.send(data.encode())
+            messages_to_send.remove(message)
 
 
 # DATA LOADERS #
@@ -185,12 +195,7 @@ def main():
                         print_client_sockets(client_sockets)
                     else:
                         handle_client_message(current_socket, cmd, data)
-                        # messages_to_send.append((current_socket, data))
-                        # for message in messages_to_send:
-                        #     current_socket, data = message
-                        #     if current_socket in ready_to_write:
-                        #         current_socket.send(data.encode())
-                        #         messages_to_send.remove(message)
+                        send_all_saves_messages(ready_to_write)
                 except Exception as e:
                     print("Connection closed (due to exception - {})".format(e))
                     handle_logout_message(current_socket)
