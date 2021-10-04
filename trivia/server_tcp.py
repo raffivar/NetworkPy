@@ -153,6 +153,7 @@ def print_client_sockets(client_sockets):
 def main():
     # Initializes global users and questions dicionaries using load functions, will be used later
     global users
+    users = load_user_database()
     global questions
 
     print("Welcome to Trivia Server!")
