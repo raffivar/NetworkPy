@@ -23,7 +23,7 @@ PROTOCOL_CLIENT = {
 PROTOCOL_SERVER = {
     "login_ok_msg": "LOGIN_OK",
     "login_failed_msg": "ERROR",
-    # "your_score": "YOUR_SCORE",
+    "your_score": "YOUR_SCORE",
     "your_question": "YOUR_QUESTION",
     "correct_answer": "CORRECT_ANSWER",
     "wrong_answer": "WRONG_ANSWER"
@@ -33,6 +33,9 @@ PROTOCOL_SERVER = {
 ERROR_RETURN = None  # What is returned in case of an error
 
 EXPECTED_FIELDS = {
+    # CLIENT
+    "LOGIN": 1,
+    # SERVER
     "LOGIN_OK": 0,
     "ERROR": 0,
     "LOGGED_ANSWER": 0,
