@@ -104,7 +104,7 @@ def handle_logout_message(conn):
     Returns: None
     """
     global logged_users
-    print("{} has been disconnected".format(conn))
+    print("{} has disconnected".format(conn))
     conn.close()
 
 
@@ -146,6 +146,7 @@ def handle_client_message(conn, cmd, data):
 
 
 def print_client_sockets(client_sockets):
+    print("All active players:")
     for cs in client_sockets:
         print("\t", cs.getpeername())
 
@@ -178,7 +179,6 @@ def main():
                         handle_logout_message(current_socket)
                         print_client_sockets(client_sockets)
                     else:
-                        print(cmd, data)
                         handle_client_message(current_socket, cmd, data)
                         # messages_to_send.append((current_socket, data))
                         # for message in messages_to_send:
