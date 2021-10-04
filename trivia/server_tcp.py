@@ -187,7 +187,7 @@ def main():
                         #         current_socket.send(data.encode())
                         #         messages_to_send.remove(message)
                 except Exception as e:
-                    print("Connection closed (due to exception {}".format(e))
+                    print("Connection closed (due to exception - {})".format(e))
                     client_sockets.remove(current_socket)
                     handle_logout_message(current_socket)
                     print_client_sockets(client_sockets)
