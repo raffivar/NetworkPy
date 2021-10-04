@@ -35,6 +35,7 @@ ERROR_RETURN = None  # What is returned in case of an error
 EXPECTED_FIELDS = {
     # CLIENT
     "LOGIN": 1,
+    "LOGOUT": 0,
     # SERVER
     "LOGIN_OK": 0,
     "ERROR": 0,
@@ -86,6 +87,8 @@ def parse_message(data):
         return None, None
     content = parsed_data[2]
     if len(content) != expected_content_len:
+        return None, None
+    if cmd not in EXPECTED_FIELDS:
         return None, None
     split_content = split_data(content, EXPECTED_FIELDS[cmd])
     if split_content is None:

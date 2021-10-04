@@ -147,12 +147,11 @@ def main():
         elif choice == "l":
             get_logged_users(conn)
         elif choice == "q":
+            logout(conn)
             break
         else:
             print("command {} not found".format(choice))
 
-    logout(conn)
-    conn.close()
     exit()
 
 
