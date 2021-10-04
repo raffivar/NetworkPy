@@ -45,6 +45,7 @@ def main():
                                 current_socket.send(data.encode())
                                 messages_to_send.remove(message)
                 except:
+                    print("Connection closed")
                     client_sockets.remove(current_socket)
                     current_socket.close()
                     print_client_sockets(client_sockets)
