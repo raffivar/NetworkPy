@@ -130,8 +130,7 @@ def handle_login_message(conn, data):
         send_error(conn, "Incorrect password")
         return
 
-    msg = "Login successful!"
-    build_and_send_message(conn, chatlib.PROTOCOL_SERVER["login_ok_msg"], msg)
+    build_and_send_message(conn, chatlib.PROTOCOL_SERVER["login_ok_msg"], "Login successful!")
 
 
 def handle_client_message(conn, cmd, data):
