@@ -9,6 +9,8 @@ import chatlib
 users = {}
 questions = {}
 logged_users = {}  # a dictionary of client hostnames to usernames - will be used later
+client_sockets = []
+messages_to_send = []
 
 MAX_MSG_LENGTH = 1024
 ERROR_MSG = "Error! "
@@ -104,8 +106,10 @@ def handle_logout_message(conn):
     Returns: None
     """
     global logged_users
-    print("{} has disconnected".format(conn))
+    global client_sockets
+    client_sockets.remove(conn)
     conn.close()
+    print("{} has disconnected".format(conn))
 
 
 def handle_login_message(conn, data):
@@ -155,14 +159,14 @@ def print_client_sockets(client_sockets):
 
 def main():
     # Initializes global users and questions dicionaries using load functions, will be used later
+    global client_sockets
+    global messages_to_send
     global users
     users = load_user_database()
     global questions
 
     print("Welcome to Trivia Server!")
     server_socket = setup_socket()
-    client_sockets = []
-    messages_to_send = []
 
     while True:
         ready_to_read, ready_to_write, in_error = select.select([server_socket] + client_sockets, client_sockets, [])
@@ -177,7 +181,6 @@ def main():
                     cmd, data = recv_message_and_parse(current_socket)
                     if cmd is None:
                         print("Connection closed (on purpose)")
-                        client_sockets.remove(current_socket)
                         handle_logout_message(current_socket)
                         print_client_sockets(client_sockets)
                     else:
@@ -190,7 +193,6 @@ def main():
                         #         messages_to_send.remove(message)
                 except Exception as e:
                     print("Connection closed (due to exception - {})".format(e))
-                    client_sockets.remove(current_socket)
                     handle_logout_message(current_socket)
                     print_client_sockets(client_sockets)
 
