@@ -101,14 +101,6 @@ def send_error(conn, error_msg):
 
 ##### MESSAGE HANDLING
 
-
-def handle_getscore_message(conn, username):
-    global users
-
-
-# Implement this in later chapters
-
-
 def handle_logout_message(conn):
     """
     Closes the given socket (in laster chapters, also remove user from logged_users dictioary)
@@ -144,7 +136,19 @@ def handle_login_message(conn, data):
         send_error(conn, "Incorrect password")
         return
 
+    logged_users[conn.getpeername()] = username
     build_and_send_message(conn, chatlib.PROTOCOL_SERVER["login_ok_msg"], "Login successful!")
+
+
+def handle_getscore_message(conn, username):
+    global users
+
+    if username not in users:
+        send_error(conn, "User does not exist")
+        return
+
+    user = users[username]
+    build_and_send_message(conn, chatlib.PROTOCOL_SERVER["your_score"], str(user["score"]))
 
 
 def handle_client_message(conn, cmd, data):
@@ -157,6 +161,8 @@ def handle_client_message(conn, cmd, data):
 
     if cmd == chatlib.PROTOCOL_CLIENT["login_msg"]:
         handle_login_message(conn, data)
+    elif cmd == chatlib.PROTOCOL_CLIENT["score_msg"]:
+        handle_getscore_message(conn, logged_users[conn.getpeername()])
 
 
 def print_client_sockets(client_sockets):

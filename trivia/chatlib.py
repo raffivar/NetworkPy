@@ -36,6 +36,7 @@ EXPECTED_FIELDS = {
     # CLIENT
     "LOGIN": 1,
     "LOGOUT": 0,
+    "MY_SCORE": 0,
     # SERVER
     "LOGIN_OK": 0,
     "ERROR": 0,

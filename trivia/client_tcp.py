@@ -81,7 +81,7 @@ def get_score(conn):
     """
     cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["score_msg"], "")
     score = data[0]
-    print("your score is {}".format(score))
+    print("your score is: {}".format(score))
 
 
 def get_highscore(conn):
