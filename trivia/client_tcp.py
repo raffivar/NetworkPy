@@ -92,7 +92,7 @@ def get_highscore(conn):
     """
     cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["highscore_msg"], "")
     highscore = data[0]
-    print("High-Score table:\n{}".format(highscore))
+    print("High-Score:\n{}".format(highscore))
 
 
 def connect():

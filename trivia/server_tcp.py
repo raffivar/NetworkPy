@@ -182,11 +182,20 @@ def handle_client_message(conn, cmd, data):
 
     if cmd == chatlib.PROTOCOL_CLIENT["login_msg"]:
         handle_login_message(conn, data)
-    elif cmd == chatlib.PROTOCOL_CLIENT["score_msg"]:
+        return
+
+    if conn.getpeername() not in logged_users:
+        send_error(conn, "You're not logged in, buddy")
+        return
+
+    if cmd == chatlib.PROTOCOL_CLIENT["score_msg"]:
         handle_getscore_message(conn, logged_users[conn.getpeername()])
-    elif cmd == chatlib.PROTOCOL_CLIENT["highscore_msg"]:
+        return
+    if cmd == chatlib.PROTOCOL_CLIENT["highscore_msg"]:
         handle_highscore_message(conn)
-    elif cmd == chatlib.PROTOCOL_CLIENT["logged_msg"]:
+        return
+
+    if cmd == chatlib.PROTOCOL_CLIENT["logged_msg"]:
         handle_logged_message(conn)
 
 
