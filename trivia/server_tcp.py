@@ -151,6 +151,20 @@ def handle_getscore_message(conn, username):
     build_and_send_message(conn, chatlib.PROTOCOL_SERVER["your_score"], str(user["score"]))
 
 
+def handle_highscore_message(conn):
+    global users
+
+    high_score_list = []
+    for username in users:
+        name = username
+        score = users[username]["score"]
+        high_score_list.append((name, score))
+
+    high_score_list.sort(key=lambda user: user[1], reverse=True)
+    high_score_string = '\n'.join("\t{}: {}".format(user[0], str(user[1])) for user in high_score_list)
+    build_and_send_message(conn, chatlib.PROTOCOL_SERVER["all_score_msg"], high_score_string)
+
+
 def handle_client_message(conn, cmd, data):
     """
     Gets message code and data and calls the right function to handle command
@@ -163,6 +177,8 @@ def handle_client_message(conn, cmd, data):
         handle_login_message(conn, data)
     elif cmd == chatlib.PROTOCOL_CLIENT["score_msg"]:
         handle_getscore_message(conn, logged_users[conn.getpeername()])
+    elif cmd == chatlib.PROTOCOL_CLIENT["highscore_msg"]:
+        handle_highscore_message(conn)
 
 
 def print_client_sockets(client_sockets):

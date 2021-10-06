@@ -24,6 +24,7 @@ PROTOCOL_SERVER = {
     "login_ok_msg": "LOGIN_OK",
     "login_failed_msg": "ERROR",
     "your_score": "YOUR_SCORE",
+    "all_score_msg": "ALL_SCORE",
     "your_question": "YOUR_QUESTION",
     "correct_answer": "CORRECT_ANSWER",
     "wrong_answer": "WRONG_ANSWER"
@@ -37,6 +38,7 @@ EXPECTED_FIELDS = {
     "LOGIN": 1,
     "LOGOUT": 0,
     "MY_SCORE": 0,
+    "HIGHSCORE": 0,
     # SERVER
     "LOGIN_OK": 0,
     "ERROR": 0,
