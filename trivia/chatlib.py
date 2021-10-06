@@ -13,7 +13,7 @@ DATA_DELIMITER = "#"  # Delimiter in the data part of the message
 PROTOCOL_CLIENT = {
     "login_msg": "LOGIN",
     "logout_msg": "LOGOUT",
-    "get_logged_users": "LOGGED",
+    "logged_msg": "LOGGED",
     "score_msg": "MY_SCORE",
     "highscore_msg": "HIGHSCORE",
     "play_question": "GET_QUESTION",
@@ -25,6 +25,7 @@ PROTOCOL_SERVER = {
     "login_failed_msg": "ERROR",
     "your_score": "YOUR_SCORE",
     "all_score_msg": "ALL_SCORE",
+    "logged_answer_msg": "LOGGED_ANSWER",
     "your_question": "YOUR_QUESTION",
     "correct_answer": "CORRECT_ANSWER",
     "wrong_answer": "WRONG_ANSWER"
@@ -39,6 +40,7 @@ EXPECTED_FIELDS = {
     "LOGOUT": 0,
     "MY_SCORE": 0,
     "HIGHSCORE": 0,
+    "LOGGED": 0,
     # SERVER
     "LOGIN_OK": 0,
     "ERROR": 0,

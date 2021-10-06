@@ -107,9 +107,10 @@ def handle_logout_message(conn):
     Recieves: socket
     Returns: None
     """
-    global logged_users
     global client_sockets
     client_sockets.remove(conn)
+    global logged_users
+    logged_users.pop(conn.getpeername())
     conn.close()
     print("{} has disconnected".format(conn))
 
@@ -165,6 +166,12 @@ def handle_highscore_message(conn):
     build_and_send_message(conn, chatlib.PROTOCOL_SERVER["all_score_msg"], high_score_string)
 
 
+def handle_logged_message(conn):
+    global logged_users
+    high_score_string = '\n'.join("\t{}".format(logged_users[user]) for user in logged_users)
+    build_and_send_message(conn, chatlib.PROTOCOL_SERVER["logged_answer_msg"], high_score_string)
+
+
 def handle_client_message(conn, cmd, data):
     """
     Gets message code and data and calls the right function to handle command
@@ -179,6 +186,8 @@ def handle_client_message(conn, cmd, data):
         handle_getscore_message(conn, logged_users[conn.getpeername()])
     elif cmd == chatlib.PROTOCOL_CLIENT["highscore_msg"]:
         handle_highscore_message(conn)
+    elif cmd == chatlib.PROTOCOL_CLIENT["logged_msg"]:
+        handle_logged_message(conn)
 
 
 def print_client_sockets(client_sockets):

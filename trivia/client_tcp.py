@@ -68,7 +68,7 @@ def get_logged_users(conn):
     Parameters: conn (socket object)
     Returns: Nothing
     """
-    cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["get_logged_users"], "")
+    cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["logged_msg"], "")
     logged_users = data[0]
     print("Logged users:\n{}".format(logged_users))
 
