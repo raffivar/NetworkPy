@@ -3,6 +3,8 @@
 ##############################################################################
 import select
 import socket
+import random
+
 import chatlib
 
 # GLOBALS
@@ -172,6 +174,49 @@ def handle_logged_message(conn):
     build_and_send_message(conn, chatlib.PROTOCOL_SERVER["logged_answer_msg"], high_score_string)
 
 
+def create_random_question():
+    global questions
+    if len(questions) == 0:
+        return None
+    random_question = random.choice(list(questions.items()))
+    question_id = random_question[0]
+    question_txt = random_question[1]["question"]
+    question_possible_answers = random_question[1]["answers"]
+    question = list()
+    question.append(str(question_id))
+    question.append(question_txt)
+    question += question_possible_answers
+    return chatlib.join_data(question)
+
+
+def handle_question_message(conn):
+    question = create_random_question()
+    if question is None:
+        send_error(conn, "No more questions")
+    else:
+        build_and_send_message(conn, chatlib.PROTOCOL_SERVER["your_question_msg"], question)
+
+
+def handle_answer_message(conn, data):
+    question_id = int(data[0])
+    user_answer = int(data[1])
+
+    if question_id not in questions.keys():
+        send_error(conn, "Question no longer exists")
+        return
+
+    question = questions[question_id]
+    correct_answer = question["correct"]
+
+    if user_answer == correct_answer:
+        username = logged_users[conn.getpeername()]
+        user = users[username]
+        user["score"] += 5
+        build_and_send_message(conn, chatlib.PROTOCOL_SERVER["correct_answer_msg"], "")
+    else:
+        build_and_send_message(conn, chatlib.PROTOCOL_SERVER["wrong_answer_msg"], str(correct_answer))
+
+
 def handle_client_message(conn, cmd, data):
     """
     Gets message code and data and calls the right function to handle command
@@ -197,6 +242,15 @@ def handle_client_message(conn, cmd, data):
 
     if cmd == chatlib.PROTOCOL_CLIENT["logged_msg"]:
         handle_logged_message(conn)
+        return
+
+    if cmd == chatlib.PROTOCOL_CLIENT["play_question_msg"]:
+        handle_question_message(conn)
+        return
+
+    if cmd == chatlib.PROTOCOL_CLIENT["send_answer_msg"]:
+        handle_answer_message(conn, data)
+        return
 
 
 def print_client_sockets(client_sockets):
@@ -212,8 +266,9 @@ def main():
     global client_sockets
     global messages_to_send
     global users
-    users = load_user_database()
     global questions
+    users = load_user_database()
+    questions = load_questions()
 
     print("Welcome to Trivia Server!")
     server_socket = setup_socket()

@@ -45,7 +45,7 @@ def play_question(conn):
     Gets high score from the server
     Returns: Nothing
     """
-    cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["play_question"], "")
+    cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["play_question_msg"], "")
     question_code = data[0]
     question = data[1]
     print("Q: {}:".format(question))
@@ -54,10 +54,10 @@ def play_question(conn):
     while answer_code not in ['1', '2', '3', '4']:
         answer_code = input("Invalid answer, please try again [1-4]: ")
     data_to_send = chatlib.join_data([question_code, answer_code])
-    cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["send_answer"], data_to_send)
-    if cmd == chatlib.PROTOCOL_SERVER["correct_answer"]:
+    cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["send_answer_msg"], data_to_send)
+    if cmd == chatlib.PROTOCOL_SERVER["correct_answer_msg"]:
         print("YES!!!!")
-    elif cmd == chatlib.PROTOCOL_SERVER["wrong_answer"]:
+    elif cmd == chatlib.PROTOCOL_SERVER["wrong_answer_msg"]:
         correct_answer = data[0]
         print("Nope, correct answer is #{}".format(correct_answer))
 

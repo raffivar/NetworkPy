@@ -16,8 +16,8 @@ PROTOCOL_CLIENT = {
     "logged_msg": "LOGGED",
     "score_msg": "MY_SCORE",
     "highscore_msg": "HIGHSCORE",
-    "play_question": "GET_QUESTION",
-    "send_answer": "SEND_ANSWER"
+    "play_question_msg": "GET_QUESTION",
+    "send_answer_msg": "SEND_ANSWER"
 }  # .. Add more commands if needed
 
 PROTOCOL_SERVER = {
@@ -26,9 +26,9 @@ PROTOCOL_SERVER = {
     "your_score": "YOUR_SCORE",
     "all_score_msg": "ALL_SCORE",
     "logged_answer_msg": "LOGGED_ANSWER",
-    "your_question": "YOUR_QUESTION",
-    "correct_answer": "CORRECT_ANSWER",
-    "wrong_answer": "WRONG_ANSWER"
+    "your_question_msg": "YOUR_QUESTION",
+    "correct_answer_msg": "CORRECT_ANSWER",
+    "wrong_answer_msg": "WRONG_ANSWER"
 }  # ..  Add more commands if needed
 
 # Other constants
@@ -41,6 +41,8 @@ EXPECTED_FIELDS = {
     "MY_SCORE": 0,
     "HIGHSCORE": 0,
     "LOGGED": 0,
+    "GET_QUESTION": 0,
+    "SEND_ANSWER": 1,
     # SERVER
     "LOGIN_OK": 0,
     "ERROR": 0,
