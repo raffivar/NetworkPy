@@ -21,11 +21,11 @@ PROTOCOL_CLIENT = {
 }  # .. Add more commands if needed
 
 PROTOCOL_SERVER = {
+    "error_msg": "ERROR",
     "login_ok_msg": "LOGIN_OK",
-    "login_failed_msg": "ERROR",
+    "logged_answer_msg": "LOGGED_ANSWER",
     "your_score_msg": "YOUR_SCORE",
     "all_score_msg": "ALL_SCORE",
-    "logged_answer_msg": "LOGGED_ANSWER",
     "your_question_msg": "YOUR_QUESTION",
     "correct_answer_msg": "CORRECT_ANSWER",
     "wrong_answer_msg": "WRONG_ANSWER"
@@ -36,22 +36,22 @@ ERROR_RETURN = None  # What is returned in case of an error
 
 EXPECTED_FIELDS = {
     # CLIENT
-    "LOGIN": 1,
-    "LOGOUT": 0,
-    "MY_SCORE": 0,
-    "HIGHSCORE": 0,
-    "LOGGED": 0,
-    "GET_QUESTION": 0,
-    "SEND_ANSWER": 1,
+    PROTOCOL_CLIENT["login_msg"]: 1,
+    PROTOCOL_CLIENT["logout_msg"]: 0,
+    PROTOCOL_CLIENT["logged_msg"]: 0,
+    PROTOCOL_CLIENT["score_msg"]: 0,
+    PROTOCOL_CLIENT["highscore_msg"]: 0,
+    PROTOCOL_CLIENT["play_question_msg"]: 0,
+    PROTOCOL_CLIENT["send_answer_msg"]: 1,
     # SERVER
-    "LOGIN_OK": 0,
-    "ERROR": 0,
-    "LOGGED_ANSWER": 0,
-    "YOUR_SCORE": 0,
-    "ALL_SCORE": 0,
-    "YOUR_QUESTION": 5,
-    "CORRECT_ANSWER": 0,
-    "WRONG_ANSWER": 0
+    PROTOCOL_SERVER["error_msg"]: 0,
+    PROTOCOL_SERVER["login_ok_msg"]: 0,
+    PROTOCOL_SERVER["logged_answer_msg"]: 0,
+    PROTOCOL_SERVER["your_score_msg"]: 0,
+    PROTOCOL_SERVER["all_score_msg"]: 0,
+    PROTOCOL_SERVER["your_question_msg"]: 5,
+    PROTOCOL_SERVER["correct_answer_msg"]: 0,
+    PROTOCOL_SERVER["wrong_answer_msg"]: 0
 }
 
 

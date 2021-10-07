@@ -98,7 +98,7 @@ def send_error(conn, error_msg):
     Recieves: socket, message error string from called function
     Returns: None
     """
-    build_and_send_message(conn, chatlib.PROTOCOL_SERVER["login_failed_msg"], error_msg)
+    build_and_send_message(conn, chatlib.PROTOCOL_SERVER["error_msg"], error_msg)
 
 
 ##### MESSAGE HANDLING
