@@ -197,7 +197,7 @@ def handle_question_message(conn):
         build_and_send_message(conn, chatlib.PROTOCOL_SERVER["your_question_msg"], question)
 
 
-def handle_answer_message(conn, data):
+def handle_answer_message(conn, username, data):
     question_id = int(data[0])
     user_answer = int(data[1])
 
@@ -209,7 +209,6 @@ def handle_answer_message(conn, data):
     correct_answer = question["correct"]
 
     if user_answer == correct_answer:
-        username = logged_users[conn.getpeername()]
         user = users[username]
         user["score"] += 5
         build_and_send_message(conn, chatlib.PROTOCOL_SERVER["correct_answer_msg"], "")
@@ -249,7 +248,7 @@ def handle_client_message(conn, cmd, data):
         return
 
     if cmd == chatlib.PROTOCOL_CLIENT["send_answer_msg"]:
-        handle_answer_message(conn, data)
+        handle_answer_message(conn, logged_users[conn.getpeername()], data)
         return
 
 
