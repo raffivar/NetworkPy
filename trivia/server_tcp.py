@@ -151,7 +151,7 @@ def handle_getscore_message(conn, username):
         return
 
     user = users[username]
-    build_and_send_message(conn, chatlib.PROTOCOL_SERVER["your_score"], str(user["score"]))
+    build_and_send_message(conn, chatlib.PROTOCOL_SERVER["your_score_msg"], str(user["score"]))
 
 
 def handle_highscore_message(conn):

@@ -23,7 +23,7 @@ PROTOCOL_CLIENT = {
 PROTOCOL_SERVER = {
     "login_ok_msg": "LOGIN_OK",
     "login_failed_msg": "ERROR",
-    "your_score": "YOUR_SCORE",
+    "your_score_msg": "YOUR_SCORE",
     "all_score_msg": "ALL_SCORE",
     "logged_answer_msg": "LOGGED_ANSWER",
     "your_question_msg": "YOUR_QUESTION",
