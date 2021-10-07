@@ -23,12 +23,25 @@ SERVER_IP = "127.0.0.1"
 # HELPER SOCKET METHODS
 
 def build_and_send_message(conn, code, msg):
+    """
+    Builds a new message using chatlib, wanted code and message.
+    Prints debug info, then sends it to the given socket.
+    Parameters: conn (socket object), code (str), data (str)
+    Returns: Nothing
+    """
     full_msg = chatlib.build_message(code, msg)
     messages_to_send.append((conn, full_msg))  # add to messages_to_send
     # print("[SERVER] ", full_msg)  # Debug print -> Moved to "send_all_saves_messages"
 
 
 def recv_message_and_parse(conn):
+    """
+    Receives a new message from given socket,
+    then parses the message using chatlib.
+    Parameters: conn (socket object)
+    Returns: cmd (str) and data (str) of the received message.
+    If error occurred, will return None, None
+    """
     full_msg = conn.recv(1024).decode()
     cmd, data = chatlib.parse_message(full_msg)
     print("[CLIENT] ", full_msg)  # Debug print
@@ -36,6 +49,11 @@ def recv_message_and_parse(conn):
 
 
 def send_saved_messages(ready_to_write):
+    """
+    Sends all messages saved in global list "messages_to_send"
+    Receives: -
+    Returns: None (sends all messages saved in global list "messages_to_send")
+    """
     global messages_to_send
     for message in messages_to_send:
         current_socket, data = message
@@ -96,25 +114,12 @@ def send_error(conn, error_msg):
     """
     Send error message with given message
     Recieves: socket, message error string from called function
-    Returns: None
+    Returns: -
     """
     build_and_send_message(conn, chatlib.PROTOCOL_SERVER["error_msg"], error_msg)
 
 
 ##### MESSAGE HANDLING
-
-def handle_logout_message(conn):
-    """
-    Closes the given socket (in laster chapters, also remove user from logged_users dictioary)
-    Recieves: socket
-    Returns: None
-    """
-    global client_sockets
-    client_sockets.remove(conn)
-    global logged_users
-    logged_users.pop(conn.getpeername())
-    conn.close()
-    print("{} has disconnected".format(conn))
 
 
 def handle_login_message(conn, data):
@@ -143,7 +148,38 @@ def handle_login_message(conn, data):
     build_and_send_message(conn, chatlib.PROTOCOL_SERVER["login_ok_msg"], "Login successful!")
 
 
+def handle_logout_message(conn):
+    """
+    Closes the given socket (in laster chapters, also remove user from logged_users dictioary)
+    Recieves: socket
+    Returns: None
+    """
+    global client_sockets
+    client_sockets.remove(conn)
+    global logged_users
+    logged_users.pop(conn.getpeername())
+    conn.close()
+    print("{} has disconnected".format(conn))
+
+
+def handle_logged_message(conn):
+    """
+    Gets socket and sends a list of all currently logged in players
+    Receives: socket
+    Returns: None (sends answer to client)
+    """
+    global logged_users
+    high_score_string = '\n'.join("\t{}".format(logged_users[user]) for user in logged_users)
+    build_and_send_message(conn, chatlib.PROTOCOL_SERVER["logged_answer_msg"], high_score_string)
+
+
 def handle_getscore_message(conn, username):
+    """
+    Gets socket and username. Checks user exists.
+    If not - sends error and finished. If all ok, sends user score.
+    Receives: socket, username
+    Returns: None (sends answer to client)
+    """
     global users
 
     if username not in users:
@@ -155,6 +191,11 @@ def handle_getscore_message(conn, username):
 
 
 def handle_highscore_message(conn):
+    """
+    Gets socket and sends the scores of all the users from the 'users' dictionary
+    Receives: socket
+    Returns: None (sends answer to client)
+    """
     global users
 
     high_score_list = []
@@ -168,13 +209,12 @@ def handle_highscore_message(conn):
     build_and_send_message(conn, chatlib.PROTOCOL_SERVER["all_score_msg"], high_score_string)
 
 
-def handle_logged_message(conn):
-    global logged_users
-    high_score_string = '\n'.join("\t{}".format(logged_users[user]) for user in logged_users)
-    build_and_send_message(conn, chatlib.PROTOCOL_SERVER["logged_answer_msg"], high_score_string)
-
-
 def create_random_question():
+    """
+    Creates a random question using the "questions" dictionary
+    Receives: -
+    Returns: A random question from the "questions" dictionary according to protocol
+    """
     global questions
     if len(questions) == 0:
         return None
@@ -190,6 +230,11 @@ def create_random_question():
 
 
 def handle_question_message(conn):
+    """
+    Gets socket and sends a question to the user
+    Receives: socket
+    Returns: None (sends answer to client)
+    """
     question = create_random_question()
     if question is None:
         send_error(conn, "No more questions")
@@ -198,6 +243,13 @@ def handle_question_message(conn):
 
 
 def handle_answer_message(conn, username, data):
+    """
+    Gets socket, username, data, and checks if the user's answer is correct.
+    If correct, adds 5 points to user's score and sends a correct_answer_msg
+    If incorrect, sends wrong_answer_msg along with the correct answer
+    Receives: socket, username, data(question_id + user's answer)
+    Returns: None (sends answer to client)
+    """
     question_id = int(data[0])
     user_answer = int(data[1])
 
@@ -252,7 +304,13 @@ def handle_client_message(conn, cmd, data):
         return
 
 
-def print_client_sockets(client_sockets):
+def print_client_sockets():
+    """
+    Prints all client sockets
+    Receives: -
+    Returns: None (Prints all client sockets from global "client_sockets" dictionary)
+    """
+    global client_sockets
     print("All connected sockets:")
     if len(client_sockets) == 0:
         print("\t<No sockets connected>")
@@ -279,21 +337,21 @@ def main():
                 (client_socket, client_address) = current_socket.accept()
                 print("New client joined!", client_address)
                 client_sockets.append(client_socket)
-                print_client_sockets(client_sockets)
+                print_client_sockets()
             else:
                 try:
                     cmd, data = recv_message_and_parse(current_socket)
                     if cmd is None:
                         print("Connection closed (on purpose)")
                         handle_logout_message(current_socket)
-                        print_client_sockets(client_sockets)
+                        print_client_sockets()
                     else:
                         handle_client_message(current_socket, cmd, data)
                         send_saved_messages(ready_to_write)
                 except Exception as e:
                     print("Connection closed (due to exception - {})".format(e))
                     handle_logout_message(current_socket)
-                    print_client_sockets(client_sockets)
+                    print_client_sockets()
 
 
 if __name__ == '__main__':
