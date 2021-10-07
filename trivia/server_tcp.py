@@ -35,7 +35,7 @@ def recv_message_and_parse(conn):
     return cmd, data
 
 
-def send_all_saves_messages(ready_to_write):
+def send_saved_messages(ready_to_write):
     global messages_to_send
     for message in messages_to_send:
         current_socket, data = message
@@ -290,7 +290,7 @@ def main():
                         print_client_sockets(client_sockets)
                     else:
                         handle_client_message(current_socket, cmd, data)
-                        send_all_saves_messages(ready_to_write)
+                        send_saved_messages(ready_to_write)
                 except Exception as e:
                     print("Connection closed (due to exception - {})".format(e))
                     handle_logout_message(current_socket)
