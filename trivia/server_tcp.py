@@ -95,7 +95,7 @@ def save_user_database():
     Returns: -
     """
     with open('db_users.txt', 'w') as f:
-        json.dump(users, f)
+        json.dump(users, f, indent=4)
 
 
 # SOCKET CREATOR
