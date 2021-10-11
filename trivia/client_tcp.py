@@ -46,6 +46,9 @@ def play_question(conn):
     Returns: Nothing
     """
     cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["play_question_msg"], "")
+    if data is None:
+        print("No more questions left for you")
+        return
     question_code = data[0]
     question = data[1]
     print("Q: {}:".format(question))

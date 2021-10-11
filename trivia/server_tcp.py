@@ -213,19 +213,21 @@ def handle_highscore_message(conn):
     build_and_send_message(conn, chatlib.PROTOCOL_SERVER["all_score_msg"], high_score_string)
 
 
-def create_random_question():
+def create_random_question(username):
     """
     Creates a random question using the "questions" dictionary
     Receives: -
     Returns: A random question from the "questions" dictionary according to protocol
     """
     global questions
+    user = users[username]
+    available_questions_ids = list(questions.keys() - user["questions_asked"])
     if len(questions) == 0:
         return None
-    random_question = random.choice(list(questions.items()))
-    question_id = random_question[0]
-    question_txt = random_question[1]["question"]
-    question_possible_answers = random_question[1]["answers"]
+    question_id = random.choice(available_questions_ids)
+    question = questions[question_id]
+    question_txt = question["question"]
+    question_possible_answers = question["answers"]
     question = list()
     question.append(str(question_id))
     question.append(question_txt)
@@ -233,13 +235,13 @@ def create_random_question():
     return chatlib.join_data(question)
 
 
-def handle_question_message(conn):
+def handle_question_message(conn, username):
     """
     Gets socket and sends a question to the user
     Receives: socket
     Returns: None (sends answer to client)
     """
-    question = create_random_question()
+    question = create_random_question(username)
     if question is None:
         send_error(conn, "No more questions")
     else:
@@ -261,11 +263,13 @@ def handle_answer_message(conn, username, data):
         send_error(conn, "Question no longer exists")
         return
 
+    user = users[username]
+    user["questions_asked"].append(question_id)
+
     question = questions[question_id]
     correct_answer = question["correct"]
 
     if user_answer == correct_answer:
-        user = users[username]
         user["score"] += 5
         build_and_send_message(conn, chatlib.PROTOCOL_SERVER["correct_answer_msg"], "")
     else:
@@ -302,7 +306,7 @@ def handle_client_message(conn, cmd, data):
         return
 
     if cmd == chatlib.PROTOCOL_CLIENT["play_question_msg"]:
-        handle_question_message(conn)
+        handle_question_message(conn, logged_users[conn.getpeername()])
         return
 
     if cmd == chatlib.PROTOCOL_CLIENT["send_answer_msg"]:
