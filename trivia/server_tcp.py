@@ -1,6 +1,7 @@
 ##############################################################################
 # server.py
 ##############################################################################
+import json
 import select
 import socket
 import random
@@ -71,13 +72,9 @@ def load_questions():
     Recieves: -
     Returns: questions dictionary
     """
-    questions = {
-        2313: {"question": "How much is 2+2", "answers": ["3", "4", "2", "1"], "correct": 2},
-        4122: {"question": "What is the capital of France?", "answers": ["Lion", "Marseille", "Paris", "Montpellier"],
-               "correct": 3}
-    }
-
-    return questions
+    with open('db_questions.txt') as f:
+        json_data = json.load(f)
+        return json_data
 
 
 def load_user_database():
@@ -86,12 +83,9 @@ def load_user_database():
     Recieves: -
     Returns: user dictionary
     """
-    users = {
-        "test": {"password": "test", "score": 0, "questions_asked": []},
-        "yossi": {"password": "123", "score": 50, "questions_asked": []},
-        "master": {"password": "master", "score": 200, "questions_asked": []}
-    }
-    return users
+    with open('db_users.txt') as f:
+        json_data = json.load(f)
+        return json_data
 
 
 # SOCKET CREATOR
@@ -116,7 +110,7 @@ def send_error(conn, error_msg):
     Recieves: socket, message error string from called function
     Returns: -
     """
-    build_and_send_message(conn, chatlib.PROTOCOL_SERVER["error_msg"], error_msg)
+    build_and_send_message(conn, chatlib.PROTOCOL_SERVER["error_msg"], ERROR_MSG + error_msg)
 
 
 ##### MESSAGE HANDLING
@@ -250,7 +244,7 @@ def handle_answer_message(conn, username, data):
     Receives: socket, username, data(question_id + user's answer)
     Returns: None (sends answer to client)
     """
-    question_id = int(data[0])
+    question_id = data[0]
     user_answer = int(data[1])
 
     if question_id not in questions.keys():

@@ -55,6 +55,8 @@ def play_question(conn):
         answer_code = input("Invalid answer, please try again [1-4]: ")
     data_to_send = chatlib.join_data([question_code, answer_code])
     cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["send_answer_msg"], data_to_send)
+    if cmd == chatlib.PROTOCOL_SERVER["error_msg"]:
+        print(data[0])
     if cmd == chatlib.PROTOCOL_SERVER["correct_answer_msg"]:
         print("YES!!!!")
     elif cmd == chatlib.PROTOCOL_SERVER["wrong_answer_msg"]:
