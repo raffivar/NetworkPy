@@ -72,20 +72,30 @@ def load_questions():
     Recieves: -
     Returns: questions dictionary
     """
-    with open('db_questions.txt') as f:
+    with open('db_questions.txt', 'r') as f:
         json_data = json.load(f)
         return json_data
 
 
 def load_user_database():
     """
-    Loads users list from file	## FILE SUPPORT TO BE ADDED LATER
+    Loads users list from file
     Recieves: -
     Returns: user dictionary
     """
-    with open('db_users.txt') as f:
+    with open('db_users.txt', 'r') as f:
         json_data = json.load(f)
         return json_data
+
+
+def save_user_database():
+    """
+    Saves users list to file
+    Recieves: -
+    Returns: -
+    """
+    with open('db_users.txt', 'w') as f:
+        json.dump(users, f)
 
 
 # SOCKET CREATOR
@@ -260,6 +270,8 @@ def handle_answer_message(conn, username, data):
         build_and_send_message(conn, chatlib.PROTOCOL_SERVER["correct_answer_msg"], "")
     else:
         build_and_send_message(conn, chatlib.PROTOCOL_SERVER["wrong_answer_msg"], str(correct_answer))
+
+    save_user_database()
 
 
 def handle_client_message(conn, cmd, data):
