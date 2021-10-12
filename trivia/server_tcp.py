@@ -5,7 +5,7 @@ import json
 import select
 import socket
 import random
-
+import requests
 import chatlib
 
 # GLOBALS
@@ -66,15 +66,42 @@ def send_saved_messages(ready_to_write):
 
 # DATA LOADERS #
 
-def load_questions():
+# def load_questions():
+#     """
+#     Loads questions bank from file
+#     Receives: -
+#     Returns: questions dictionary
+#     """
+#     with open('db_questions.txt', 'r') as f:
+#         json_data = json.load(f)
+#         return json_data
+
+
+def load_questions_from_web():
     """
-    Loads questions bank from file	## FILE SUPPORT TO BE ADDED LATER
-    Recieves: -
+    Loads questions bank from web
+    Receives: -
     Returns: questions dictionary
     """
-    with open('db_questions.txt', 'r') as f:
-        json_data = json.load(f)
-        return json_data
+    r = requests.get('https://opentdb.com/api.php?amount=50&type=multiple')
+    all_questions = r.json()['results']
+    i = 0
+    result = {}
+    for full_question in all_questions:
+        i += 1
+        question_id = str(i)
+        question = full_question['question']
+        correct = full_question['correct_answer']
+        answers = full_question['incorrect_answers'] + [correct]
+        random.shuffle(answers)
+        correct_id = -1
+        for j in range(len(answers)):
+            if answers[j] == correct:
+                correct_id = j + 1
+                break
+        question_entry = {"question": question, "answers": answers, "correct": correct_id}
+        result[question_id] = question_entry
+    return result
 
 
 def load_user_database():
@@ -335,7 +362,7 @@ def main():
     global users
     global questions
     users = load_user_database()
-    questions = load_questions()
+    questions = load_questions_from_web()
 
     print("Welcome to Trivia Server!")
     server_socket = setup_socket()

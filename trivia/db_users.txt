@@ -1,16 +1,26 @@
 {
     "test": {
         "password": "test",
-        "score": 10,
+        "score": 15,
         "questions_asked": [
             "4122",
-            "2313"
+            "2313",
+            "25",
+            "50",
+            "45",
+            "12",
+            "14",
+            "33",
+            "32"
         ]
     },
     "yossi": {
         "password": "123",
-        "score": 50,
-        "questions_asked": []
+        "score": 55,
+        "questions_asked": [
+            "2313",
+            "4122"
+        ]
     },
     "master": {
         "password": "master",
